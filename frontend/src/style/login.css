@@ -1,0 +1,87 @@
+section {
+  padding: 60px 0;
+}
+
+.login__container {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden; /* Để bo góc cả ảnh bên trong */
+}
+
+.login__img {
+  width: 50%;
+}
+
+.login__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.login__form {
+  width: 50%;
+  padding: 50px;
+  position: relative;
+  background: #fff;
+}
+
+.user {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+}
+
+.user img {
+  width: 100%;
+}
+
+.login__form h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--heading-color);
+}
+
+.login__form input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid #ddd;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.auth__btn {
+  width: 100%;
+  background: var(--heading-color) !important;
+  color: #fff !important;
+  font-weight: 600;
+  margin-top: 20px;
+  border-radius: 5px !important;
+}
+
+.auth__btn:hover {
+  background: var(--secondary-color) !important;
+}
+
+.login__form p {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.login__form p a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 768px) {
+  .login__img {
+    display: none;
+  }
+  .login__form {
+    width: 100%;
+  }
+}
