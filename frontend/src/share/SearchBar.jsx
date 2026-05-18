@@ -14,10 +14,10 @@ const SearchBar = () => {
 
     const searchHandler = async () => {
         const location = locationRef.current.value
-        const distance = distanceRef.current.value
-        const maxGroupSize = maxGroupSizeRef.current.value
+        const distance = distanceRef.current.value || 0
+        const maxGroupSize = maxGroupSizeRef.current.value || 1
 
-        if(location ==='' || distance ==='' || maxGroupSize ===''){
+        if(location ==='' && distance ==='' && maxGroupSize ===''){
             return alert("chưa điền thông tin kìa bạn yêu ơi!!!")
         }
 

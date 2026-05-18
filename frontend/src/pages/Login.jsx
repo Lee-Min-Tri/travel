@@ -28,26 +28,30 @@ const Login = () => {
   // 3. Hàm xử lý khi nhấn nút Login (Sửa lỗi 'handleClick' is not defined)
   const handleClick = async (e) => {
     e.preventDefault();
-    dispatch({type:'LOGIN_START'})
-    
+    dispatch({ type: 'LOGIN_START' })
+
     try {
-      const res = await fetch(`${BASE_URL}/auth/login`,{
-        method:'post',
-        headers:{
-          'Content-Type':'application/json'
+      const res = await fetch(`${BASE_URL}/auth/login`, {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        credentials:'include',
+        credentials: 'include',
         body: JSON.stringify(credentials)
       })
 
       const result = await res.json()
-      if(!res.ok) alert(result.message)
-        console.log(result.data)
 
-        dispatch({type:'LOGIN_SUCCESS', payload:result.data})
-        navigate('/')
+      if (!res.ok) {
+        dispatch({ type: 'LOGIN_FAILURE', payload: result.message });
+        return alert(result.message);
+      }
+
+      localStorage.setItem('token', result.token);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: result.data })
+      navigate('/')
     } catch (err) {
-      dispatch({type:'LOGIN_FAILURE', payload:err.data})
+      dispatch({ type: 'LOGIN_FAILURE', payload: err.data })
     }
   };
 

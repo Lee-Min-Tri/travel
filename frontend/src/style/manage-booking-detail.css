@@ -1,0 +1,121 @@
+.manage_booking_detail {
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.manage_booking_detail .bg-white {
+  border-radius: 10px;
+  border-top: 4px solid #df2020;
+}
+
+.manage_booking_detail h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.customer_info {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border-left: 4px solid #2196f3;
+}
+
+.customer_info p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.form_section {
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #df2020;
+}
+
+.form_section h5 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form_section .form-group {
+  margin-bottom: 1rem;
+}
+
+.form_section label {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form_section input,
+.form_section textarea,
+.form_section select {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form_section input:focus,
+.form_section textarea:focus,
+.form_section select:focus {
+  border-color: #df2020;
+  box-shadow: 0 0 8px rgba(223, 32, 32, 0.2);
+  outline: none;
+}
+
+.form_section textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form_actions {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+}
+
+.form_actions button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.form_actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.form_actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .manage_booking_detail .bg-white {
+    padding: 1.5rem;
+  }
+
+  .manage_booking_detail h2 {
+    font-size: 1.3rem;
+  }
+
+  .form_section {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .form_actions {
+    flex-direction: column;
+  }
+
+  .form_actions button {
+    width: 100%;
+  }
+}

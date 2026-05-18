@@ -1,0 +1,21 @@
+.admin_layout {
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+.admin_sidebar {
+  background: #ffffff;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  min-height: 100vh;
+}
+
+.admin_main-content {
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+@media (max-width: 991px) {
+  .admin_sidebar {
+    min-height: auto;
+  }
+}

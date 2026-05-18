@@ -4,6 +4,7 @@ import { Card, CardBody } from "reactstrap"
 import caculateAvgRating from '../utils/avgRating'
 
 import "./TourCard.css"
+import { BASE_URL } from '../utils/config'
 
 const TourCard = ({ tour }) => {
     const { _id, title, city, photo, price, featured, reviews } = tour
@@ -14,7 +15,7 @@ const TourCard = ({ tour }) => {
         <div className='tour_card'>
             <Card>
                 <div className="tour_img">
-                    <img src={photo} alt="tour_img" />
+                    <img src={`http://localhost:4000/static-number-one/${photo}`} alt="tour_img" />
                     {featured && <span>Tour nổi bật</span>}
                 </div>
 
@@ -41,7 +42,7 @@ const TourCard = ({ tour }) => {
                         <h5>{Number(price).toLocaleString('vi-VN')}đ <span>/1 người/</span></h5>
 
                         <button className="btn booking_btn">
-                            <Link to={`/tours/${_id}`}>Đặt ngay</Link>
+                            <Link to={`/tour/${_id}`}>Đặt ngay</Link>
                         </button>
                     </div>
                 </CardBody>

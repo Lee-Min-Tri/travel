@@ -1,0 +1,51 @@
+.admin_sidebar_menu {
+  background: #fff;
+  min-height: 100vh;
+}
+
+.admin_sidebar_menu .admin_logo {
+  background: linear-gradient(135deg, #df2020 0%, #ff6b6b 100%);
+  color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.admin_sidebar_menu .admin_logo h5 {
+  margin: 0;
+}
+
+.admin_sidebar_menu .list-group-item {
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+}
+
+.admin_sidebar_menu .list-group-item .text-decoration-none {
+  color: #333;
+  font-weight: 600;
+}
+
+.admin_sidebar_menu .list-group-item .text-decoration-none:hover {
+  color: #df2020;
+}
+
+..sidebar_footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-top: none;
+}
+
+.sidebar_footer a {
+  font-weight: 600;
+}
+
+@media only screen and (max-width: 991px) {
+  .admin_sidebar_menu {
+    min-height: auto;
+  }
+
+  .sidebar_footer {
+    position: relative;
+  }
+}

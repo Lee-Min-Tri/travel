@@ -23,6 +23,9 @@ const tourSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    images: {
+      type: [String],
+      default: [] },
     desc: {
       type: String,
       required: true,
@@ -35,6 +38,22 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    tourDates: [
+      {
+        date: {
+          type: Date,
+          required: true,
+        },
+        seatsAvailable: {
+          type: Number,
+          required: true,
+        },
+        bookedCount: {
+          type: Number,
+          default: 0,
+        },
+      }
+    ],
 
     reviews: [
       {
@@ -47,6 +66,15 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    itinerary: [
+  {
+    day: { type: Number, required: true },
+    location: { type: String, required: true },
+    description: { type: String, required: true },
+    meals: { type: String } 
+  }
+],
   },
   { timestamps: true }
 );

@@ -1,0 +1,31 @@
+.booking_list table {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    background: #fff;
+}
+
+.booking_list thead th {
+    background-color: #f8f9fa;
+    color: var(--heading-color);
+    font-weight: 600;
+    padding: 15px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.booking_list tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    color: #555;
+}
+
+.booking_list tbody tr:hover {
+    background-color: #fff9f4 !important; /* Màu cam nhạt khi hover */
+    transition: 0.3s;
+}
+
+.badge {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
