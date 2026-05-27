@@ -28,7 +28,7 @@
   color: #df2020;
 }
 
-..sidebar_footer {
+.sidebar_footer {
   position: absolute;
   bottom: 0;
   width: 100%;

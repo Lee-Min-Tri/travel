@@ -12,6 +12,7 @@ import authRoute from './routes/auth.js'
 import reviewRoute from './routes/review.js'
 import bookingRoute from './routes/booking.js'
 import faqRoute from './routes/faqs.js'
+import { initTourStatusScheduler } from './schedulers/tourStatusScheduler.js'
 
 
 dotenv.config()
@@ -48,4 +49,6 @@ app.use('/static-number-one', express.static('uploads'));
 app.listen(port, () =>{
     connect()
     console.log(`Server Started on http://localhost:${port}`)
+    initTourStatusScheduler()
+    console.log('Tour status scheduler initialized')
 })

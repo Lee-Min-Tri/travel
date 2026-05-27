@@ -21,9 +21,19 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    phone: {
+      type: String,
+      default: "",
+    },
+
     role: {
       type: String,
       default: "user",
+    },
+
+    status: {
+      type: String,
+      default: "Đang rảnh",
     },
   },
   { timestamps: true }

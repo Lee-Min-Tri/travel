@@ -1,4 +1,11 @@
 import Tour from '../models/Tour.js'
+import User from '../models/User.js'
+import { calculateMinPassengers, calculateConfirmationDeadline } from '../utils/tourStatusUtils.js'
+
+const setGuideStatus = async (guideId, status) => {
+  if (!guideId) return null
+  return User.findByIdAndUpdate(guideId, { status }, { new: true })
+}
 
 const parseTourDates = (tourData, defaultCapacity) => {
     if (!tourData.tourDates) return tourData;
@@ -53,6 +60,14 @@ export const createTour = async (req, res) => {
         }
     }
 
+    // Initialize tour status fields
+    if (tourData.tourDates && tourData.tourDates.length > 0) {
+        tourData.minPassengers = calculateMinPassengers(tourData.maxGroupSize);
+        tourData.departureDate = tourData.tourDates[0].date;
+        tourData.confirmationDeadline = calculateConfirmationDeadline(tourData.tourDates[0].date);
+        tourData.status = "Mở để đặt";
+    }
+
     // 4. Tạo đối tượng tour mới kết hợp req.body và các file ảnh
     const newTour = new Tour({
         ...tourData,
@@ -79,6 +94,9 @@ export const updateTour = async (req, res) => {
     const id = req.params.id;
 
     try {
+        const currentTour = await Tour.findById(id).select('tourGuide');
+        const previousGuideId = currentTour?.tourGuide?.guideId?.toString() || null;
+
         // Tạo một đối tượng update chứa dữ liệu từ body (title, city, price...)
         let updateData = { ...req.body };
 
@@ -96,8 +114,8 @@ export const updateTour = async (req, res) => {
 
         // Parse tourDates nếu có
         if (updateData.tourDates) {
-            const currentTour = await Tour.findById(id).select('maxGroupSize');
-            const defaultCapacity = updateData.maxGroupSize || currentTour?.maxGroupSize || 0;
+            const currentTourData = await Tour.findById(id).select('maxGroupSize');
+            const defaultCapacity = updateData.maxGroupSize || currentTourData?.maxGroupSize || 0;
             try {
                 updateData = parseTourDates(updateData, defaultCapacity);
             } catch (err) {
@@ -108,10 +126,37 @@ export const updateTour = async (req, res) => {
             }
         }
 
+        // Initialize tour status fields if not set
+        if (updateData.tourDates && updateData.tourDates.length > 0) {
+            if (!updateData.minPassengers || updateData.minPassengers === 0) {
+                updateData.minPassengers = calculateMinPassengers(updateData.maxGroupSize);
+            }
+            if (!updateData.departureDate) {
+                updateData.departureDate = updateData.tourDates[0].date;
+            }
+            if (!updateData.confirmationDeadline) {
+                updateData.confirmationDeadline = calculateConfirmationDeadline(updateData.tourDates[0].date);
+            }
+        }
+
         // KIỂM TRA VÀ CẬP NHẬT ẢNH MỚI (NẾU CÓ)
         // 1. Cập nhật ảnh đại diện (photo)
         if (req.files && req.files['photo']) {
             updateData.photo = req.files['photo'][0].filename;
+        }
+
+        // Cập nhật trạng thái HDV khi gán hoặc đổi HDV cho tour
+        if (updateData.tourGuide) {
+            const nextGuideId = updateData.tourGuide.guideId ? updateData.tourGuide.guideId.toString() : null;
+            if (previousGuideId && previousGuideId !== nextGuideId) {
+                await setGuideStatus(previousGuideId, 'Đang rảnh');
+            }
+            if (nextGuideId && previousGuideId !== nextGuideId) {
+                await setGuideStatus(nextGuideId, 'Đang bận');
+            }
+            if (!nextGuideId && previousGuideId) {
+                await setGuideStatus(previousGuideId, 'Đang rảnh');
+            }
         }
 
         // 2. Cập nhật thư viện ảnh (images)

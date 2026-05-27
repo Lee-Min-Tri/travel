@@ -75,6 +75,61 @@ const tourSchema = new mongoose.Schema(
     meals: { type: String } 
   }
 ],
+
+    // Tour Status Management
+    status: {
+      type: String,
+      enum: [
+        "Mở để đặt",           // Open for booking
+        "Chờ xác nhận",        // Pending confirmation (not enough passengers or before deadline)
+        "Đã đủ khách",         // Full
+        "Đã xác nhận sẽ chạy",  // Confirmed to run
+        "Đã khởi hành",        // Departed
+        "Đã hoàn thành",       // Completed
+        "Đã hủy"               // Cancelled
+      ],
+      default: "Mở để đặt"
+    },
+
+    minPassengers: {
+      type: Number,
+      // Calculated as 70% of maxGroupSize, can be overridden
+    },
+
+    departureDate: {
+      type: Date,
+      // Primary departure date (first date in tourDates)
+    },
+
+    confirmationDeadline: {
+      type: Date,
+      // Auto-calculated as 3 days before departureDate
+    },
+
+    cancelledReason: {
+      type: String,
+      // Reason for cancellation
+    },
+
+    adminNotes: {
+      type: String,
+      // Admin notes about the tour
+    },
+
+    tourGuide: {
+      guideId: {
+        type: mongoose.Types.ObjectId,
+        ref: "User"
+      },
+      name: {
+        type: String,
+        default: ""
+      },
+      phone: {
+        type: String,
+        default: ""
+      }
+    }
   },
   { timestamps: true }
 );

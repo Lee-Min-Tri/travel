@@ -1,17 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, FormGroup, Label, Input, Spinner, Alert } from 'reactstrap';
+import { AuthContext } from '../../context/AuthContext';
 import { BASE_URL } from '../../utils/config';
 import '../../style/manage-booking-detail.css';
 
 const ManageBookingDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [guides, setGuides] = useState([]);
+
+  const currentUser = user || null;
+  const shouldAutoFillConsultant = currentUser && (currentUser.role === 'admin' || currentUser.role === 'nhân viên');
+  const currentConsultantInfo = shouldAutoFillConsultant
+    ? { name: currentUser.username || currentUser.name || '', phone: currentUser.phone || '' }
+    : { name: '', phone: '' };
 
   const [formData, setFormData] = useState({
     startLocation: '',
@@ -19,7 +28,11 @@ const ManageBookingDetail = () => {
     consultant: { name: '', phone: '' },
     tourGuide: { name: '', phone: '' },
     specialNote: '',
-    status: ''
+    status: '',
+    guestSize: 1,
+    childrenUnder7: 0,
+    children7To12: 0,
+    guideId: ''
   });
 
   useEffect(() => {
@@ -35,13 +48,24 @@ const ManageBookingDetail = () => {
         const result = await res.json();
         if (res.ok) {
           setBooking(result.data);
+          
+          // Auto-fill tourGuide from tour if available
+          const tourGuideFromTour = result.data.tourId?.tourGuide || result.data.tourGuide || { name: '', phone: '' };
+          const guideIdFromTour = result.data.tourId?.tourGuide?.guideId || result.data.guideId || '';
+          
           setFormData({
             startLocation: result.data.startLocation || '',
             departureTime: result.data.departureTime || '',
-            consultant: result.data.consultant || { name: '', phone: '' },
-            tourGuide: result.data.tourGuide || { name: '', phone: '' },
+            consultant: shouldAutoFillConsultant
+              ? currentConsultantInfo
+              : result.data.consultant || { name: '', phone: '' },
+            tourGuide: tourGuideFromTour,
             specialNote: result.data.specialNote || '',
-            status: result.data.status || ''
+            status: result.data.status || '',
+            guestSize: result.data.guestSize || 1,
+            childrenUnder7: result.data.childrenUnder7 || 0,
+            children7To12: result.data.children7To12 || 0,
+            guideId: guideIdFromTour
           });
         } else {
           setError(result.message || 'Không thể tải thông tin booking');
@@ -53,7 +77,25 @@ const ManageBookingDetail = () => {
       }
     };
 
+    const fetchGuides = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${BASE_URL}/users/guides`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const result = await res.json();
+        if (res.ok) {
+          setGuides(result.data || []);
+        }
+      } catch (err) {
+        console.error('Không thể tải danh sách hướng dẫn viên', err);
+      }
+    };
+
     fetchBookingDetail();
+    fetchGuides();
   }, [id]);
 
   const handleChange = (e) => {
@@ -76,11 +118,51 @@ const ManageBookingDetail = () => {
     }
   };
 
+  const availableGuides = guides.filter(guide => guide.status === 'Đang rảnh' || guide._id === formData.guideId)
+
+  const handleGuideSelection = (e) => {
+    const selectedId = e.target.value
+    const guide = guides.find(item => item._id === selectedId)
+    setFormData(prev => ({
+      ...prev,
+      guideId: selectedId,
+      tourGuide: {
+        ...prev.tourGuide,
+        name: guide?.username || '',
+        phone: guide?.phone || ''
+      }
+    }))
+  }
+
+  const getBookingPriceSummary = () => {
+    const price = booking?.tourId?.price || 0
+    const guestSizeCount = Number(formData.guestSize || 0)
+    const under7 = Number(formData.childrenUnder7 || 0)
+    const sevenTo12 = Number(formData.children7To12 || 0)
+    const adults = Math.max(0, guestSizeCount - under7 - sevenTo12)
+
+    const adultTotal = adults * price
+    const childTotal = sevenTo12 * price * 0.5
+    return {
+      adults,
+      under7,
+      sevenTo12,
+      total: adultTotal + childTotal
+    }
+  }
+
+  const bookingSummary = getBookingPriceSummary()
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
     setSuccess(null);
+
+    const payload = {
+      ...formData,
+      consultant: shouldAutoFillConsultant ? currentConsultantInfo : formData.consultant
+    };
 
     try {
       const token = localStorage.getItem('token');
@@ -90,7 +172,7 @@ const ManageBookingDetail = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
 
       const result = await res.json();
@@ -199,6 +281,23 @@ const ManageBookingDetail = () => {
             <div className='form_section mb-5'>
               <h5 className='fw-bold text-secondary mb-3'>HƯỚNG DẪN VIÊN</h5>
               <Row>
+                <Col lg='12'>
+                  <FormGroup>
+                    <Label for='guideId' className='fw-bold'>
+                      Chọn hướng dẫn viên
+                    </Label>
+                    <Input type='select' id='guideId' value={formData.guideId} onChange={handleGuideSelection}>
+                      <option value=''>-- Chọn HDV --</option>
+                      {availableGuides.map(guide => (
+                        <option key={guide._id} value={guide._id}>
+                          {guide.username} ({guide.email}) - {guide.status || 'Không xác định'}
+                        </option>
+                      ))}
+                    </Input>
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
                 <Col lg='6'>
                   <FormGroup>
                     <Label for='tourGuide.name' className='fw-bold'>
@@ -230,6 +329,65 @@ const ManageBookingDetail = () => {
               </Row>
             </div>
 
+            {/* Voucher / Child Pricing */}
+            <div className='form_section mb-5'>
+              <h5 className='fw-bold text-secondary mb-3'>ƯU ĐÃI TRẺ EM</h5>
+              <Row>
+                <Col lg='4'>
+                  <FormGroup>
+                    <Label for='guestSize' className='fw-bold'>
+                      Tổng số khách
+                    </Label>
+                    <Input
+                      type='number'
+                      min='1'
+                      id='guestSize'
+                      value={formData.guestSize}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col lg='4'>
+                  <FormGroup>
+                    <Label for='childrenUnder7' className='fw-bold'>
+                      Trẻ em dưới 7 tuổi (miễn phí)
+                    </Label>
+                    <Input
+                      type='number'
+                      min='0'
+                      id='childrenUnder7'
+                      value={formData.childrenUnder7}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                </Col>
+                <Col lg='4'>
+                  <FormGroup>
+                    <Label for='children7To12' className='fw-bold'>
+                      Trẻ em 7-12 tuổi (giảm 50%)
+                    </Label>
+                    <Input
+                      type='number'
+                      min='0'
+                      id='children7To12'
+                      value={formData.children7To12}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col lg='6'>
+                  <div className='p-3 bg-light rounded'>
+                    <p className='mb-1'><strong>Người lớn:</strong> {bookingSummary.adults}</p>
+                    <p className='mb-1'><strong>Trẻ em dưới 7 tuổi:</strong> {bookingSummary.under7}</p>
+                    <p className='mb-1'><strong>Trẻ em 7-12 tuổi:</strong> {bookingSummary.sevenTo12}</p>
+                    <p className='mb-0'><strong>Giá dự tính:</strong> {Number(bookingSummary.total).toLocaleString('vi-VN')} đ</p>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+
             {/* Consultant Info */}
             <div className='form_section mb-5'>
               <h5 className='fw-bold text-secondary mb-3'>NHÂN VIÊN TƯ VẤN</h5>
@@ -245,6 +403,7 @@ const ManageBookingDetail = () => {
                       placeholder='Nhập tên NV'
                       value={formData.consultant.name}
                       onChange={handleChange}
+                      disabled={shouldAutoFillConsultant}
                     />
                   </FormGroup>
                 </Col>
@@ -259,6 +418,7 @@ const ManageBookingDetail = () => {
                       placeholder='VD: 0912345678'
                       value={formData.consultant.phone}
                       onChange={handleChange}
+                      disabled={shouldAutoFillConsultant}
                     />
                   </FormGroup>
                 </Col>

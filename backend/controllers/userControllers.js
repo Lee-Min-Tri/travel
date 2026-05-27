@@ -1,10 +1,26 @@
 import User from '../models/User.js'
+import bcrypt from 'bcryptjs'
 
 export const createUser = async (req, res) => {
-    const newUser = new User(req.body)
     try {
-        const saveUser = await newUser.save()
+        if (!req.body.password) {
+            return res.status(400).json({ success: false, message: 'Mật khẩu là bắt buộc' })
+        }
 
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(req.body.password, salt)
+
+        const newUser = new User({
+            username: req.body.username,
+            email: req.body.email,
+            password: hashedPassword,
+            photo: req.body.photo,
+            phone: req.body.phone || '',
+            role: req.body.role || 'user',
+            status: req.body.status || 'Đang rảnh'
+        })
+
+        const saveUser = await newUser.save()
         res.status(200).json({ success: true, message: 'Tạo user thành công', data: saveUser })
     } catch (error) {
         res.status(500).json({ success: false, message: 'Tạo user thất bại' })
@@ -56,6 +72,24 @@ export const getSingleUser = async (req, res) => {
         res.status(404).json({ success: false, message: 'Không tìm thấy user' })
     }
 }
+
+export const getGuides = async (req, res) => {
+    try {
+        const guides = await User.find({ role: 'guide' }).select('username email phone status role')
+        const normalizedGuides = guides.map(guide => ({
+            _id: guide._id,
+            username: guide.username,
+            email: guide.email,
+            phone: guide.phone || '',
+            role: guide.role,
+            status: guide.status || 'Đang rảnh'
+        }))
+        res.status(200).json({ success: true, message: 'Các hướng dẫn viên', data: normalizedGuides })
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Không thể tải danh sách hướng dẫn viên' })
+    }
+}
+
 export const getAllUser = async (req, res) => {
 
     try {

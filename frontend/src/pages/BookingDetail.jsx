@@ -76,6 +76,12 @@ const BookingDetail = () => {
       </section>
     );
   }
+
+  const childrenUnder7 = Number(booking.childrenUnder7 || 0)
+  const children7To12 = Number(booking.children7To12 || 0)
+  const adultsCount = Math.max(0, Number(booking.guestSize || 0) - childrenUnder7 - children7To12)
+  const totalPrice = Number(booking.totalPrice || 0)
+
   console.log("Dữ liệu Itinerary nhận được:", booking.tourId?.itinerary);
 
   return (
@@ -163,7 +169,14 @@ const BookingDetail = () => {
             <Row>
               <Col lg='6' className='offset-lg-6'>
                 <h5 className='fw-bold mb-3'>CHI TIẾT THANH TOÁN</h5>
-                <p className='d-flex justify-content-between'><span>Tổng giá:</span> <strong>{Number(booking.totalPrice).toLocaleString('vi-VN')}đ</strong></p>
+                <p className='d-flex justify-content-between'><span>Tổng giá:</span> <strong>{totalPrice.toLocaleString('vi-VN')}đ</strong></p>
+                <p className='d-flex justify-content-between'><span>Người lớn:</span> <strong>{adultsCount}</strong></p>
+                {childrenUnder7 > 0 && (
+                  <p className='d-flex justify-content-between'><span>Trẻ em dưới 7 tuổi:</span> <strong>{childrenUnder7} (Miễn phí)</strong></p>
+                )}
+                {children7To12 > 0 && (
+                  <p className='d-flex justify-content-between'><span>Trẻ em 7-12 tuổi:</span> <strong>{children7To12} (Giảm 50%)</strong></p>
+                )}
                 <p className='d-flex justify-content-between text-muted'><span>Trạng thái:</span> <strong>{booking.status}</strong></p>
               </Col>
             </Row>

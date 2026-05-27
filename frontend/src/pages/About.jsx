@@ -1,5 +1,6 @@
 import React from 'react'
 import { Container, Row, Col } from 'reactstrap'
+import { Link } from 'react-router-dom'
 import '../style/about.css'
 import aboutImg from '../assets/images/ava-1.jpg' 
 
@@ -55,6 +56,10 @@ const About = () => {
                     <p>Luôn có mặt khi bạn cần.</p>
                   </div>
                 </div>
+              </div>
+
+              <div className="about_cta mt-4">
+                <Link to='/policy' className='btn btn-outline-primary'>Xem thêm FAQ</Link>
               </div>
             </Col>
           </Row>

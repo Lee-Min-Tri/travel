@@ -1,0 +1,391 @@
+/* ========== DASHBOARD STYLES ========== */
+
+.dashboard {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+/* ========== DASHBOARD HEADER ========== */
+.dashboard-header {
+  background: white;
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #df2020;
+}
+
+.dashboard-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.dashboard-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+/* ========== STAT CARDS ========== */
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.3s ease;
+  border-left: 4px solid;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-blue {
+  border-left-color: #0066cc;
+}
+
+.stat-card-green {
+  border-left-color: #28a745;
+}
+
+.stat-card-red {
+  border-left-color: #dc3545;
+}
+
+.stat-card-orange {
+  border-left-color: #ff7e01;
+}
+
+.stat-icon {
+  font-size: 40px;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.stat-card-blue .stat-icon {
+  background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+}
+
+.stat-card-green .stat-icon {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+}
+
+.stat-card-red .stat-icon {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.stat-card-orange .stat-icon {
+  background: linear-gradient(135deg, #ff7e01 0%, #ff6c00 100%);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* ========== FILTER CARD ========== */
+.filter-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.filter-header {
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.filter-header h5 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.form-label-custom {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 8px;
+}
+
+.input-custom {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.input-custom:focus {
+  border-color: #df2020;
+  box-shadow: 0 0 0 3px rgba(223, 32, 32, 0.1);
+}
+
+.btn-custom {
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.filter-stat {
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f0 100%);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+}
+
+.filter-stat h6 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
+}
+
+.filter-stat .value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #df2020;
+  margin: 0;
+}
+
+/* ========== STATS TABLE CARDS ========== */
+.stats-table-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.table-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f0 100%);
+  padding: 18px 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.table-header h6 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.table-body {
+  padding: 10px 0;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.top-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.top-item:hover {
+  background-color: #f8f9fa;
+}
+
+.top-item:last-child {
+  border-bottom: none;
+}
+
+.top-item .rank {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #df2020 0%, #ff6b6b 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.top-item .info {
+  flex: 1;
+  min-width: 0;
+}
+
+.top-item .name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.top-item .meta {
+  font-size: 12px;
+  color: #999;
+  margin: 3px 0 0 0;
+}
+
+.top-item .amount,
+.top-item .count {
+  font-weight: 700;
+  font-size: 13px;
+  color: #df2020;
+  flex-shrink: 0;
+}
+
+/* ========== RECENT BOOKINGS CARD ========== */
+.recent-bookings-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.recent-bookings-card .table-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f0 100%);
+  padding: 18px 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.table-responsive {
+  padding: 15px 0;
+}
+
+.recent-bookings-card table {
+  margin-bottom: 0;
+}
+
+.recent-bookings-card thead th {
+  background-color: #f8f9fa;
+  border-top: none;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #666;
+  padding: 12px 15px;
+}
+
+.recent-bookings-card tbody td {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.recent-bookings-card tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 24px;
+  }
+
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .stat-card .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .filter-card,
+  .stats-table-card,
+  .recent-bookings-card {
+    margin-bottom: 20px;
+  }
+
+  .table-body {
+    max-height: 300px;
+  }
+
+  .top-item {
+    padding: 10px 12px;
+  }
+
+  .top-item .name {
+    font-size: 12px;
+  }
+
+  .top-item .rank {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+}
+
+/* ========== SCROLLBAR CUSTOM ========== */
+.table-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-body::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+.table-body::-webkit-scrollbar-thumb {
+  background: #df2020;
+  border-radius: 3px;
+}
+
+.table-body::-webkit-scrollbar-thumb:hover {
+  background: #c82333;
+}

@@ -1,0 +1,303 @@
+/* Tour Status Management Styles */
+
+.tour-status-management {
+  background-color: #f8f9fa;
+  padding: 2rem 0;
+}
+
+.status-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.status-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.status-card .card-body {
+  padding: 1.5rem;
+}
+
+.status-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.status-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* Tour List Styles */
+.tour-item {
+  background-color: white;
+  border-left: 4px solid #007bff;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.tour-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tour-item.status-pending {
+  border-left-color: #ffc107;
+}
+
+.tour-item.status-full {
+  border-left-color: #17a2b8;
+}
+
+.tour-item.status-cancelled {
+  border-left-color: #dc3545;
+  opacity: 0.8;
+}
+
+.tour-item.status-confirmed {
+  border-left-color: #28a745;
+}
+
+/* Badge Styles */
+.status-badge {
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+/* Occupancy Bar */
+.occupancy-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.occupancy-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745 0%, #ffc107 60%, #dc3545 100%);
+  transition: width 0.3s ease;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* Alert Styles */
+.tour-alert {
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.tour-alert strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* Modal Styles */
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-header h4 {
+  color: #333;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-body strong {
+  color: #495057;
+}
+
+/* Info Cards */
+.info-card {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border-left: 3px solid #007bff;
+}
+
+.info-card.warning {
+  background-color: #fff3cd;
+  border-left-color: #ffc107;
+}
+
+.info-card.danger {
+  background-color: #f8d7da;
+  border-left-color: #dc3545;
+}
+
+.info-card.success {
+  background-color: #d4edda;
+  border-left-color: #28a745;
+}
+
+/* Loading Spinner */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  flex-direction: column;
+}
+
+.spinner-container p {
+  margin-top: 1rem;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .status-value {
+    font-size: 2rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+  }
+  
+  .tour-item {
+    margin-bottom: 1.5rem;
+  }
+  
+  .tour-item .row {
+    flex-direction: column;
+  }
+  
+  .tour-item .col-md-3,
+  .tour-item .col-md-2,
+  .tour-item .col-md-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .tour-item .text-end {
+    text-align: left !important;
+  }
+}
+
+/* Status-specific Colors */
+.text-success { color: #28a745 !important; }
+.text-warning { color: #ffc107 !important; }
+.text-info { color: #17a2b8 !important; }
+.text-danger { color: #dc3545 !important; }
+.text-muted { color: #6c757d !important; }
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tour-item {
+  animation: slideIn 0.3s ease;
+}
+
+/* Statistics Section */
+.statistics-section {
+  margin-bottom: 2rem;
+}
+
+.statistics-section h4 {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/* Pending Tours Section */
+.pending-tours-section {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pending-tours-section .card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1.5rem;
+}
+
+.pending-tours-section h4 {
+  color: #333;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+/* Table Styles (if needed) */
+.tour-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tour-table th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: 600;
+  padding: 1rem;
+  border-bottom: 2px solid #dee2e6;
+  text-align: left;
+}
+
+.tour-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.tour-table tr:hover {
+  background-color: #f8f9fa;
+}

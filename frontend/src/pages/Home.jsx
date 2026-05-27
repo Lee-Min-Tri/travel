@@ -2,6 +2,7 @@ import React from 'react'
 import '../style/home.css'
 
 import { Container, Row, Col } from 'reactstrap'
+import { Link } from 'react-router-dom'
 import heroImg from '../assets/images/hero-img01.jpg'
 import heroImg2 from '../assets/images/hero-img02.jpg'
 import heroVideo from '../assets/images/hero-video.mp4'
@@ -145,6 +146,21 @@ const Home = () => {
       </Container>
     </section>
     {/*lời chứng thực end*/}
+
+    <section className="faq_cta py-5">
+      <Container>
+        <Row className="align-items-center">
+          <Col lg='8'>
+            <h2 className="fw-bold">Có thắc mắc trước khi đi?</h2>
+            <p>Khám phá phần Câu hỏi thường gặp để hiểu rõ chính sách, thủ tục và hỗ trợ trước khi đặt tour.</p>
+          </Col>
+          <Col lg='4' className="text-lg-end">
+            <Link to='/policy' className='btn btn-primary'>Xem FAQ</Link>
+          </Col>
+        </Row>
+      </Container>
+    </section>
+
     <Newsletter/>
   </>
 }

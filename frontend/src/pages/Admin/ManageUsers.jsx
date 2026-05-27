@@ -8,12 +8,12 @@ const ManageUsers = () => {
    const [modal, setModal] = useState(false);
    const [editMode, setEditMode] = useState(false);
    const [selectedUser, setSelectedUser] = useState(null);
-   const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'user' });
+   const [formData, setFormData] = useState({ username: '', email: '', phone: '', password: '', role: 'user', status: 'Đang rảnh' });
 
    const toggle = () => {
       setModal(!modal);
       if (!modal) { // Reset form khi đóng modal
-         setFormData({ username: '', email: '', password: '', role: 'user' });
+         setFormData({ username: '', email: '', phone: '', password: '', role: 'user', status: 'Đang rảnh' });
          setEditMode(false);
       }
    };
@@ -22,7 +22,7 @@ const ManageUsers = () => {
    const handleEdit = (user) => {
       setEditMode(true);
       setSelectedUser(user);
-      setFormData({ username: user.username, email: user.email, role: user.role, password: '' });
+      setFormData({ username: user.username, email: user.email, phone: user.phone || '', role: user.role, status: user.status || 'Đang rảnh', password: '' });
       setModal(true);
    };
 
@@ -37,7 +37,7 @@ const ManageUsers = () => {
       // Nếu editMode thì gọi PUT /users/:id, nếu không gọi POST /auth/register
       const url = editMode 
          ? `${BASE_URL}/users/${selectedUser._id}` 
-         : `${BASE_URL}/auth/register`;
+         : `${BASE_URL}/users`;
       
       const method = editMode ? 'PUT' : 'POST';
 
@@ -95,7 +95,9 @@ const ManageUsers = () => {
                            <tr>
                               <th>Tên người dùng</th>
                               <th>Email</th>
+                              <th>Điện thoại</th>
                               <th>Quyền hạn</th>
+                              <th>Trạng thái</th>
                               <th className="text-center">Thao tác</th>
                            </tr>
                         </thead>
@@ -104,9 +106,11 @@ const ManageUsers = () => {
                               <tr key={user._id}>
                                  <td className="align-middle">{user.username}</td>
                                  <td className="align-middle">{user.email}</td>
+                                 <td className="align-middle">{user.phone || '-'}</td>
                                  <td className="align-middle">
                                     <Badge color={user.role === 'admin' ? "danger" : "success"}>{user.role}</Badge>
                                  </td>
+                                 <td className="align-middle">{user.status || 'Đang rảnh'}</td>
                                  <td className="text-center">
                                     <Button color="warning" size="sm" className="me-2 text-white" onClick={() => handleEdit(user)}>Sửa</Button>
                                     <Button color="danger" size="sm" onClick={() => handleDelete(user._id)}>Xóa</Button>
@@ -133,6 +137,10 @@ const ManageUsers = () => {
                      <Label for="email">Email</Label>
                      <Input type="email" id="email" value={formData.email} onChange={handleChange} required />
                   </FormGroup>
+                  <FormGroup>
+                     <Label for="phone">Số điện thoại</Label>
+                     <Input type="text" id="phone" value={formData.phone} onChange={handleChange} required />
+                  </FormGroup>
                   {!editMode && (
                      <FormGroup>
                         <Label for="password">Mật khẩu</Label>
@@ -145,6 +153,14 @@ const ManageUsers = () => {
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                         <option value="nhân viên">Nhân viên</option>
+                        <option value="guide">Hướng dẫn viên</option>
+                     </Input>
+                  </FormGroup>
+                  <FormGroup>
+                     <Label for="status">Trạng thái</Label>
+                     <Input type="select" id="status" value={formData.status} onChange={handleChange}>
+                        <option value="Đang rảnh">Đang rảnh</option>
+                        <option value="Đang bận">Đang bận</option>
                      </Input>
                   </FormGroup>
                   <Button color="primary" type="submit" className="w-100 mt-3">Lưu thay đổi</Button>

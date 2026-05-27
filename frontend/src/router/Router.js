@@ -21,6 +21,7 @@ import ManageBookings from '../pages/Admin/ManageBookings'
 import ManageBookingDetail from '../pages/Admin/ManageBookingDetail'
 import ManageFAQ from '../pages/Admin/ManageFAQ'
 import ManageReviews from '../pages/Admin/ManageReviews'
+import FillStatusMonitoring from '../pages/Admin/FillStatusMonitoring'
 import About from '../pages/About'
 import Booking from '../pages/Mybooking'
 import Profile from '../pages/MyProfile'
@@ -73,6 +74,7 @@ const Router = () => {
                 <Route path='update-tour/:id' element={<AdminOrStaffRoute><CreateTour /></AdminOrStaffRoute>} />
                 <Route path='bookings' element={<AdminOrStaffRoute><ManageBookings /></AdminOrStaffRoute>} />
                 <Route path='bookings/:id' element={<AdminOrStaffRoute><ManageBookingDetail /></AdminOrStaffRoute>} />
+                <Route path='fill-status' element={<AdminOrStaffRoute><FillStatusMonitoring /></AdminOrStaffRoute>} />
                 <Route path='faqs' element={<AdminOnlyRoute><ManageFAQ /></AdminOnlyRoute>} />
                 <Route path='reviews' element={<AdminOrStaffRoute><ManageReviews /></AdminOrStaffRoute>} />
                 <Route path='users' element={<AdminOnlyRoute><ManageUsers /></AdminOnlyRoute>} />

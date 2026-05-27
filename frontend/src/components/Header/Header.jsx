@@ -2,11 +2,7 @@ import React, { useRef, useEffect, useContext } from 'react'
 import { 
   Container, 
   Row, 
-  Button, 
-  UncontrolledDropdown, 
-  DropdownToggle, 
-  DropdownMenu, 
-  DropdownItem 
+  Button
 } from 'reactstrap'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import logo from '../../assets/images/logo.png'
@@ -16,6 +12,7 @@ import { AuthContext } from '../../context/AuthContext'
 const nav_links = [
   { path: '/home', display: 'Home' },
   { path: '/about', display: 'Về chúng tôi' },
+  { path: '/policy', display: 'FAQ' },
   { path: '/tour', display: 'Tất cả tour' },
   { path: '/mybooking', display: 'Tour của tôi' },
   { path: '/myprofile', display: 'Thông tin của tôi' },
@@ -89,53 +86,13 @@ const Header = () => {
                   <>
                     <h5 className="mb-0 text-primary fw-bold">{username}</h5>
 
-                    {/* MENU QUẢN TRỊ (DROPDOWN) */}
                     {isManager && (
-                      <UncontrolledDropdown>
-                        <DropdownToggle 
-                          nav 
-                          caret 
-                          className="btn btn-warning btn-sm text-dark fw-bold px-3 py-1 rounded-2 ms-2"
-                          style={{ listStyle: 'none' }}
-                        >
-                          Quản trị
-                        </DropdownToggle>
-                        <DropdownMenu end className="shadow border-0 mt-2">
-                          {userRole === 'admin' && (
-                            <>
-                              <DropdownItem header className="fw-bold">HỆ THỐNG</DropdownItem>
-                              <DropdownItem>
-                                <Link to="/admin/dashboard" className="text-decoration-none text-dark">
-                                  <i className="ri-dashboard-line me-2"></i>Dashboard
-                                </Link>
-                              </DropdownItem>
-                              <DropdownItem divider />
-                            </>
-                          )}
-
-                          <DropdownItem header className="fw-bold">QUẢN LÝ</DropdownItem>
-
-                          <DropdownItem>
-                            <Link to="/admin/tours" className="text-decoration-none text-dark">
-                              <i className="ri-map-pin-line me-2"></i>Quản lý Tour
-                            </Link>
-                          </DropdownItem>
-
-                          {userRole === 'admin' && (
-                            <DropdownItem>
-                              <Link to="/admin/users" className="text-decoration-none text-dark">
-                                <i className="ri-user-settings-line me-2"></i>Quản lý User
-                              </Link>
-                            </DropdownItem>
-                          )}
-
-                          <DropdownItem>
-                            <Link to="/admin/bookings" className="text-decoration-none text-dark">
-                              <i className="ri-shopping-cart-2-line me-2"></i>Quản lý Đơn hàng
-                            </Link>
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
+                      <Button
+                        className="btn btn-warning btn-sm text-dark fw-bold px-3 py-1 rounded-2 ms-2"
+                        onClick={() => navigate(userRole === 'admin' ? '/admin/dashboard' : '/admin/tours')}
+                      >
+                        Quản trị
+                      </Button>
                     )}
 
                     <Button className="btn btn-dark" onClick={logout}>

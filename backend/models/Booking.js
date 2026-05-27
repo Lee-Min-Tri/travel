@@ -38,6 +38,14 @@ const bookingSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
+    childrenUnder7: {
+      type: Number,
+      default: 0
+    },
+    children7To12: {
+      type: Number,
+      default: 0
+    },
     phone: {
       type: Number,
       required: true

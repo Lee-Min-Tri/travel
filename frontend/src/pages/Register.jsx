@@ -13,6 +13,7 @@ const Register = () => {
   const [credentials, setCredentials] = useState({
     username: "",
     email: "",
+    phone: "",
     password: "",
   });
 
@@ -76,6 +77,15 @@ const Register = () => {
                       placeholder="Email"
                       required
                       id="email"
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <input
+                      type="text"
+                      placeholder="Số điện thoại"
+                      required
+                      id="phone"
                       onChange={handleChange}
                     />
                   </FormGroup>

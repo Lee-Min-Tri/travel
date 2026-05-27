@@ -38,6 +38,11 @@ const AdminSidebar = ({ currentUser }) => {
           </Link>
         </ListGroupItem>
         <ListGroupItem className='border-0'>
+          <Link to='/admin/fill-status' className='text-decoration-none text-dark d-flex align-items-center gap-2'>
+            <i className='ri-bar-chart-box-line'></i> Theo dõi Fill Tour
+          </Link>
+        </ListGroupItem>
+        <ListGroupItem className='border-0'>
           <Link to='/admin/faqs' className='text-decoration-none text-dark d-flex align-items-center gap-2'>
             <i className='ri-file-list-3-line'></i> Quản lý FAQ
           </Link>

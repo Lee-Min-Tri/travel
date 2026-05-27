@@ -1,5 +1,7 @@
 import Booking from "../models/Booking.js"
 import Tour from "../models/Tour.js"
+import User from "../models/User.js"
+import { updateTourStatusAuto } from "../controllers/tourStatusController.js"
 
 const normalizeBookingStatus = (booking) => {
     const normalized = booking.toObject ? booking.toObject() : { ...booking }
@@ -22,6 +24,26 @@ const findTourDateIndex = (tourDates, bookingAt) => {
         const selectedDate = new Date(bookingAt).toISOString().slice(0, 10)
         return tourDate === selectedDate
     })
+}
+
+const parsePositiveInt = (value) => Math.max(0, Number(value) || 0)
+
+const calculateBookingPrice = (tourPrice, guestSize, childrenUnder7, children7To12) => {
+    const totalGuests = parsePositiveInt(guestSize)
+    const under7 = parsePositiveInt(childrenUnder7)
+    const sevenTo12 = parsePositiveInt(children7To12)
+
+    if (under7 + sevenTo12 > totalGuests) {
+        throw new Error('Tổng số trẻ em không thể lớn hơn tổng số khách')
+    }
+
+    const adults = Math.max(0, totalGuests - under7 - sevenTo12)
+    return Math.round((adults * tourPrice) + (sevenTo12 * tourPrice * 0.5))
+}
+
+const setGuideStatus = async (guideId, status) => {
+    if (!guideId) return null
+    return User.findByIdAndUpdate(guideId, { status }, { new: true })
 }
 
 const adjustTourSeats = async (tourId, bookingAt, guestSize, mode) => {
@@ -52,8 +74,10 @@ const adjustTourSeats = async (tourId, bookingAt, guestSize, mode) => {
 
 export const createBooking = async(req,res)=>{
     try {
-        const { tourId, bookingAt, guestSize } = req.body
+        const { tourId, bookingAt, guestSize, childrenUnder7, children7To12 } = req.body
         const guestCount = Number(guestSize) || 1
+        const under7 = Number(childrenUnder7) || 0
+        const sevenTo12 = Number(children7To12) || 0
 
         const tour = await Tour.findById(tourId)
         if (!tour) {
@@ -64,13 +88,30 @@ export const createBooking = async(req,res)=>{
             return res.status(400).json({ success: false, message: 'Tour chưa có ngày khởi hành. Vui lòng cập nhật ngày khởi hành trước.' })
         }
 
+        if (under7 + sevenTo12 > guestCount) {
+            return res.status(400).json({ success: false, message: 'Tổng số trẻ em không thể lớn hơn tổng số khách' })
+        }
+
         const reserveResult = await adjustTourSeats(tourId, bookingAt, guestCount, 'reserve')
         if (!reserveResult) {
             return res.status(400).json({ success: false, message: 'Ngày khởi hành không hợp lệ hoặc đã hết ghế.' })
         }
 
-        const newBooking = new Booking(req.body)
+        const totalPrice = calculateBookingPrice(tour.price, guestCount, under7, sevenTo12)
+        const newBooking = new Booking({
+            ...req.body,
+            totalPrice,
+            childrenUnder7: under7,
+            children7To12: sevenTo12,
+        })
         const saveBooking = await newBooking.save()
+        if (req.body.guideId) {
+            await setGuideStatus(req.body.guideId, 'Đang bận')
+        }
+        
+        // Auto-update tour status (e.g., mark as full if all seats taken)
+        await updateTourStatusAuto(tourId)
+        
         return res.status(200).json({success:true, message:'Tour của bạn đã được đặt', data:saveBooking})
     } catch (err) {
         return res.status(500).json({success:false, message: err.message})
@@ -81,7 +122,9 @@ export const getBooking = async(req, res)=>{
     const id = req.params.id
 
     try {
-        let book = await Booking.findById(id).populate('tourId')
+        let book = await Booking.findById(id)
+            .populate('tourId')
+            .populate('guideId', 'username email role status')
         if (!book) {
             return res.status(404).json({ success:false, message:'Không tìm thấy booking' })
         }
@@ -145,6 +188,9 @@ export const cancelBooking = async (req, res) => {
         }
 
         await adjustTourSeats(booking.tourId, booking.bookingAt, Number(booking.guestSize || 1), 'restore')
+        if (booking.guideId) {
+            await setGuideStatus(booking.guideId, 'Đang rảnh')
+        }
         booking.status = 'Đã hủy'
         await booking.save()
 
@@ -163,7 +209,19 @@ export const updateBooking = async(req, res)=>{
             return res.status(404).json({ success: false, message: 'Không tìm thấy booking' })
         }
 
-        const { startLocation, departureTime, consultant, tourGuide, specialNote, status } = req.body
+        const {
+            startLocation,
+            departureTime,
+            consultant,
+            tourGuide,
+            specialNote,
+            status,
+            guestSize,
+            childrenUnder7,
+            children7To12,
+            guideId
+        } = req.body
+
         const prevCancelled = isCancelledStatus(existingBooking.status)
         const nextCancelled = isCancelledStatus(status)
 
@@ -171,6 +229,32 @@ export const updateBooking = async(req, res)=>{
             await adjustTourSeats(existingBooking.tourId, existingBooking.bookingAt, Number(existingBooking.guestSize || 1), 'restore')
         } else if (prevCancelled && !nextCancelled) {
             await adjustTourSeats(existingBooking.tourId, existingBooking.bookingAt, Number(existingBooking.guestSize || 1), 'reserve')
+        }
+
+        const tour = await Tour.findById(existingBooking.tourId)
+        if (!tour) {
+            return res.status(404).json({ success: false, message: 'Tour không tồn tại' })
+        }
+
+        const nextGuestSize = guestSize !== undefined ? Number(guestSize) : existingBooking.guestSize
+        const nextUnder7 = childrenUnder7 !== undefined ? Number(childrenUnder7) : (existingBooking.childrenUnder7 || 0)
+        const next7To12 = children7To12 !== undefined ? Number(children7To12) : (existingBooking.children7To12 || 0)
+
+        if (nextUnder7 + next7To12 > nextGuestSize) {
+            return res.status(400).json({ success: false, message: 'Tổng số trẻ em không thể lớn hơn tổng số khách' })
+        }
+
+        const totalPrice = calculateBookingPrice(tour.price, nextGuestSize, nextUnder7, next7To12)
+
+        const previousGuideId = existingBooking.guideId ? existingBooking.guideId.toString() : null
+        const updatedGuideId = guideId || previousGuideId
+
+        if (previousGuideId && updatedGuideId && previousGuideId !== updatedGuideId) {
+            await setGuideStatus(previousGuideId, 'Đang rảnh')
+        }
+
+        if (updatedGuideId) {
+            await setGuideStatus(updatedGuideId, 'Đang bận')
         }
 
         const updatedBooking = await Booking.findByIdAndUpdate(
@@ -181,7 +265,12 @@ export const updateBooking = async(req, res)=>{
                 consultant,
                 tourGuide,
                 specialNote,
-                status
+                status,
+                guestSize: nextGuestSize,
+                childrenUnder7: nextUnder7,
+                children7To12: next7To12,
+                totalPrice,
+                guideId: updatedGuideId
             },
             { new: true, runValidators: false }
         )
@@ -204,11 +293,22 @@ export const deleteBooking = async (req, res) => {
     const id = req.params.id
 
     try {
-        const deletedBooking = await Booking.findByIdAndDelete(id)
+        const booking = await Booking.findById(id)
 
-        if (!deletedBooking) {
+        if (!booking) {
             return res.status(404).json({success:false, message:'Không tìm thấy booking'})
         }
+
+        // If booking isn't already cancelled, restore the seats for the tour date
+        if (!isCancelledStatus(booking.status)) {
+            await adjustTourSeats(booking.tourId, booking.bookingAt, Number(booking.guestSize || 1), 'restore')
+        }
+
+        if (booking.guideId) {
+            await setGuideStatus(booking.guideId, 'Đang rảnh')
+        }
+
+        const deletedBooking = await Booking.findByIdAndDelete(id)
 
         return res.status(200).json({
             success:true,
@@ -217,5 +317,106 @@ export const deleteBooking = async (req, res) => {
         })
     } catch (err) {
         return res.status(500).json({success:false, message: err.message})
+    }
+}
+
+// Thống kê: Top 10 khách chi tiền nhiều nhất
+export const getTopSpendingCustomers = async (req, res) => {
+    try {
+        const topCustomers = await Booking.aggregate([
+            {
+                $match: { status: { $nin: ['Đã hủy','Đã hoàn tiền'] } } // Exclude cancelled and refunded bookings
+            },
+            {
+                $group: {
+                    _id: '$fullName',
+                    totalSpent: { $sum: '$totalPrice' },
+                    bookingCount: { $sum: 1 },
+                    userEmail: { $first: '$userEmail' },
+                    phone: { $first: '$phone' }
+                }
+            },
+            {
+                $sort: { totalSpent: -1 }
+            },
+            {
+                $limit: 10
+            }
+        ])
+
+        return res.status(200).json({
+            success: true,
+            message: 'Top khách chi tiền nhiều nhất',
+            data: topCustomers
+        })
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message })
+    }
+}
+
+// Thống kê: Top 10 khách đặt tour nhiều nhất
+export const getTopFrequentCustomers = async (req, res) => {
+    try {
+        const topFrequent = await Booking.aggregate([
+            {
+                $match: { status: { $nin: ['Đã hủy','Đã hoàn tiền'] } }
+            },
+            {
+                $group: {
+                    _id: '$fullName',
+                    bookingCount: { $sum: 1 },
+                    totalSpent: { $sum: '$totalPrice' },
+                    userEmail: { $first: '$userEmail' },
+                    phone: { $first: '$phone' }
+                }
+            },
+            {
+                $sort: { bookingCount: -1 }
+            },
+            {
+                $limit: 10
+            }
+        ])
+
+        return res.status(200).json({
+            success: true,
+            message: 'Top khách đặt tour nhiều nhất',
+            data: topFrequent
+        })
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message })
+    }
+}
+
+// Thống kê: Top 10 tour được đặt nhiều nhất
+export const getTopBookedTours = async (req, res) => {
+    try {
+        const topTours = await Booking.aggregate([
+            {
+                $match: { status: { $nin: ['Đã hủy','Đã hoàn tiền'] } }
+            },
+            {
+                $group: {
+                    _id: '$tourName',
+                    bookingCount: { $sum: 1 },
+                    totalRevenue: { $sum: '$totalPrice' },
+                    totalGuests: { $sum: '$guestSize' }
+                }
+            },
+            {
+                $sort: { bookingCount: -1 }
+            },
+            {
+                $limit: 10
+            }
+        ])
+
+        return res.status(200).json({
+            success: true,
+            message: 'Top tour được đặt nhiều nhất',
+            data: topTours
+        })
+    } catch (err) {
+        return res.status(500).json({ success: false, message: err.message })
     }
 }

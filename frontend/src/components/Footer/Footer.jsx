@@ -10,8 +10,12 @@ import logo from "../../assets/images/logo.png"
       display: 'Home'
     },
     {
-      path: 'about',
+      path: '/about',
       display: 'Về chúng tôi'
+    },
+    {
+      path: '/policy',
+      display: 'FAQ'
     },
     {
       path: '/tour',
@@ -24,7 +28,7 @@ import logo from "../../assets/images/logo.png"
       display: 'Bộ sưu tập'
     },
     {
-      path: 'Login',
+      path: '/login',
       display: 'Đăng nhập'
     },
     {
